@@ -20,7 +20,18 @@ body{
 	margin:20px;
 }
 
-.main-nav{
+.main-nav ul{
+	list-style: none;
+	border:3px solid #ccc;
+	padding:20px;
+	margin:20px;
+	/*float: top;*/
+}
+.main-nav li{
+	display:inline;
+	/*float: top;*/
+	text-align: right;
 	float: top;
-	width: 30%;
+	padding-left: 30px;
+	width:30%;
 }
