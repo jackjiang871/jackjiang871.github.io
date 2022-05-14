@@ -1,6 +1,32 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+// 'https://python-chess-app.herokuapp.com'
+// 'http://127.0.0.1:5000'
+const endpoint = 'http://127.0.0.1:5000'
+
+function getCookie(cname) {
+  let name = cname + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(';');
+  for(let i = 0; i <ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
+function setCookie(cname, cvalue, minutes) {
+  const d = new Date();
+  d.setTime(d.getTime() + (minutes*60*1000));
+  let expires = "expires="+ d.toUTCString();
+  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
 
 const equals = (a, b) =>
   a.length === b.length &&
@@ -9,13 +35,23 @@ const equals = (a, b) =>
 class Square extends React.Component {
 
   render() {
+    const pieceMap = {
+      '♙e': '♙',
+      '♟e': '♟',
+      '♚m': '♚',
+      '♔m': '♔',
+      '♖m': '♖',
+      '♜m': '♜'
+    }
+    var pieceToRender = pieceMap[this.props.value] || this.props.value
+
     return (
       <button 
         className="square" 
         onClick={() => this.props.onClick() }
         style={this.props.style}
       >
-        {this.props.value}
+        { pieceToRender }
       </button>
     );
   }
@@ -59,23 +95,23 @@ class Board extends React.Component {
   }
 
   async setNextBoard(r1, c1, r2, c2, board, isWhitesMove) {
-    const rawResponse = await fetch('https://python-chess-app.herokuapp.com/update-board', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(
-          {
-            "r1" : r1,
-            "c1" : c1,
-            "r2" : r2,
-            "c2" : c2,
-            "board" : board,
-            "turn": isWhitesMove? 0 : 1
-          }
-        )
-      });
+    const rawResponse = await fetch(endpoint + '/update-board', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(
+        {
+          "r1" : r1,
+          "c1" : c1,
+          "r2" : r2,
+          "c2" : c2,
+          "board" : board,
+          "turn": isWhitesMove? 0 : 1
+        }
+      )
+    });
     const content = await rawResponse.json();
 
     console.log(this.state.board)
@@ -157,14 +193,73 @@ class Board extends React.Component {
   }
 }
 
+class Players extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      players : []
+    }
+  }
+
+  async getPlayers() {
+    const rawResponse = await fetch(endpoint + '/get-players', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+    });
+    const content = await rawResponse.json();
+    console.log(content["players"])
+    this.setState({players: content["players"]})
+    return content["players"]
+  }
+
+  async createUser(username) {
+    await fetch(endpoint + '/create-user', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(
+        {
+          "name" : username
+        }
+      )
+    });
+  }
+
+  // get the session if it exists, otherwise ask for a name and create a new one
+  componentDidMount() {
+    var username = getCookie("username")
+    while (username == "") {
+      username = prompt("whats your name?", "")
+      if (username !== "") {
+        this.createUser(username)
+        setCookie("username", username, 5)
+      }
+    }
+
+    // get a list of other players on the server
+    this.getPlayers()
+  }
+
+  render() {
+    return (
+      <div> {
+        this.state.players.map((player) => {
+          return <div> {player}</div>
+        })
+      } </div>
+    )
+  }
+}
+
 class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = {}
-  }
-
-  handleClick(i) {
-    this.setState({})
   }
 
   render() {
@@ -174,9 +269,8 @@ class Game extends React.Component {
           <Board 
           />
         </div>
-        <div className="game-info">
-          <div>{ /* */ }</div>
-          <ol>{ /* */ }</ol>
+        <div className="players">
+          <Players/>
         </div>
       </div>
     );
