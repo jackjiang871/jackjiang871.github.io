@@ -12,7 +12,8 @@ class Players extends React.Component {
     };
   }
 
-  async getPlayers() {
+  getPlayers = async () => {
+    console.log("getting players")
     const rawResponse = await fetch(endpoint + "/get-players", {
       method: "GET",
       headers: {
@@ -22,8 +23,8 @@ class Players extends React.Component {
     });
     const content = await rawResponse.json();
     console.log(content["players"]);
-    this.setState({ ...this.state, players: content["players"] });
-    return content["players"];
+    this.setState({ ...this.state, players: content["players"].filter((player) => player !== this.state.yourName) });
+    setTimeout(this.getPlayers, 5000);
   }
 
   async createUser(username) {
@@ -63,7 +64,7 @@ class Players extends React.Component {
     return (
       <div>
         <label>
-          Your Name:
+          Your Name: 
           {this.state.yourName ? (
             <span>{this.state.yourName}</span>
           ) : (
@@ -74,7 +75,16 @@ class Players extends React.Component {
           )}
         </label>
         {this.state.players.map((player) => {
-          return <div> {player} </div>;
+          return (
+          <div> 
+            <span>
+              {player}
+              <button>
+              challenge
+              </button>
+            </span>
+          </div>
+            );
         })}
       </div>
     );
