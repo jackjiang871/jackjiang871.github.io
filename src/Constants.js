@@ -1,5 +1,7 @@
-// export const endpoint = "https://python-chess-app.herokuapp.com";
-export const endpoint = "http://127.0.0.1:5000";
+// Point this at a deployed rules service with REACT_APP_CHESS_API,
+// otherwise it falls back to the Python service running locally.
+export const endpoint =
+  process.env.REACT_APP_CHESS_API || "http://127.0.0.1:5000";
 export const initialBoard = [
   ["♜", "♞", "♝", "♛", "♚", "♝", "♞", "♜"],
   ["♟", "♟", "♟", "♟", "♟", "♟", "♟", "♟"],

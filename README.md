@@ -1,70 +1,56 @@
-# Getting Started with Create React App
+# jackjiang871.github.io
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+My personal site — bio, resume, and a chess app — deployed to GitHub Pages at
+[jackjiang871.github.io](https://jackjiang871.github.io/).
 
-## Available Scripts
+## Layout
 
-In the project directory, you can run:
+```
+public/
+  face.jpg          profile photo (also used as the favicon / og:image)
+src/
+  App.js            page shell: nav, hero, resume, chess, footer
+  data/resume.js    all resume content — edit here, not in the components
+  components/
+    Nav.js          sticky nav with scroll-spy
+    Hero.js         photo, bio, and outbound links
+    Resume.js       renders data/resume.js
+    ChessSection.js chess intro + <Game />
+    Game.js         board + lobby, tracks whether the back-end is reachable
+    Board.js        board state, talks to the rules service
+    Square.js       one square
+    Players.js      lobby: name cookie + player list polling
+```
 
-### `npm start`
+## Running locally
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```sh
+npm install
+npm start          # http://localhost:3000
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Deploying
 
-### `npm test`
+```sh
+npm run deploy     # builds and pushes ./build to the gh-pages branch
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Editing content
 
-### `npm run build`
+- **Bio, links, photo** — `src/data/resume.js`, the `profile` object.
+- **Resume** — the `education`, `experience`, `research`, and `skills` exports in
+  the same file.
+- **Colors and spacing** — the custom properties at the top of `src/index.css`.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## The chess back-end
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+The board is only the front half of the app: a Python service validates each move
+and returns the legal moves for the next turn. By default the app calls
+`http://127.0.0.1:5000`, so the lobby and move validation only work with that
+service running locally — the page shows a notice and stays usable otherwise.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+To point at a deployed service instead, set `REACT_APP_CHESS_API` before building:
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```sh
+REACT_APP_CHESS_API=https://your-chess-api.example.com npm run build
+```

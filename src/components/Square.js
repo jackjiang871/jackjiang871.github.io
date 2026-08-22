@@ -1,24 +1,29 @@
 import React from "react";
 
+// the back-end tags pieces that still have castling / en-passant rights
+// with a trailing character; strip it before rendering
+const pieceMap = {
+  "♙e": "♙",
+  "♟e": "♟",
+  "♚m": "♚",
+  "♔m": "♔",
+  "♖m": "♖",
+  "♜m": "♜",
+};
+
 export class Square extends React.Component {
   render() {
-    const pieceMap = {
-      "♙e": "♙",
-      "♟e": "♟",
-      "♚m": "♚",
-      "♔m": "♔",
-      "♖m": "♖",
-      "♜m": "♜",
-    };
-    var pieceToRender = pieceMap[this.props.value] || this.props.value;
+    const pieceToRender = pieceMap[this.props.value] || this.props.value;
+    const isEmpty = !pieceToRender || pieceToRender.trim() === "";
 
     return (
       <button
-        className="square"
+        className={this.props.className || "square"}
         onClick={() => this.props.onClick()}
-        style={this.props.style}
+        aria-label={this.props.label}
+        type="button"
       >
-        {pieceToRender}
+        <span className="square__piece">{isEmpty ? "" : pieceToRender}</span>
       </button>
     );
   }
