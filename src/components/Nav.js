@@ -3,7 +3,6 @@ import React from "react";
 const SECTIONS = [
   { id: "about", label: "About" },
   { id: "resume", label: "Resume" },
-  { id: "chess", label: "Chess" },
 ];
 
 export default function Nav() {

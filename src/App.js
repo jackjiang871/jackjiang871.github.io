@@ -2,7 +2,6 @@ import React from "react";
 import Nav from "./components/Nav";
 import Hero from "./components/Hero";
 import Resume from "./components/Resume";
-import ChessSection from "./components/ChessSection";
 import Icon from "./components/Icons";
 import { profile } from "./data/resume";
 
@@ -13,7 +12,6 @@ export default function App() {
       <main className="container">
         <Hero />
         <Resume />
-        <ChessSection />
       </main>
       <footer className="footer">
         <div className="container footer__inner">
